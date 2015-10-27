@@ -84,7 +84,7 @@ function asyncWriteFile(source, target, err, finish) {
     if (!repo)
         Spine.Route.navigate("");
     $.ajax({
-        url: source, 
+        url: source,
         type: "GET",
         success: function(data) {asyncWrite(data, target, err, finish)},
         error: function(e) {err(e);}
@@ -123,7 +123,8 @@ $(document).ready(function() {
             $("#loading").show();
             e.preventDefault();
             checkpass(this.user.val(), this.pass.val(),
-                      function(){Spine.Route.navigate("/main");},
+                      //function(){Spine.Route.navigate("/main");},
+                      function(){Spine.Route.navigate("/posts");},
                       curry(errShow, this.err));
         },
         init: function() {
@@ -183,7 +184,7 @@ $(document).ready(function() {
                     $("#postpath").val("");
                     $("#postdate").val("");
                     $("#posttags").val("");
-                    $("#editmd").val(sessionStorage.getItem("editmd") || "before begin to write please click 'new post' or 'new page' first");
+                    $("#editmd").val(sessionStorage.getItem("editmd") || "开始写前，请点击左边新建或编辑");
                     $("#edithtml").html("");
                     var config = JSON.parse(data);
                     config.posts.sort(function(a, b){
@@ -310,10 +311,18 @@ $(document).ready(function() {
                             var template = "template/page.html";
                             var posts = gconfig.pages;
                         }
+                      var keyVal= $("#postpath").val();
+                      if(keyVal.length==0){
+                        var now = {"title": $("#posttitle").val(),
+                                   "date": $("#postdate").val(),
+                                   "tags": $("#posttags").val(),
+                                   "path": $("#posttitle").val()+".html"};
+                      }else{
                         var now = {"title": $("#posttitle").val(),
                                    "date": $("#postdate").val(),
                                    "tags": $("#posttags").val(),
                                    "path": $("#postpath").val()};
+                      }
                         var mark = null;
                         for (var i = 0; i < posts.length; ++i)
                             if (posts[i].path == now.path)
@@ -325,7 +334,7 @@ $(document).ready(function() {
                         var content = $("#edithtml").html().replace(/\$/mg, "$$$$");
                         var md = $("#editmd").val().replace(/\$/mg, "$$$$");
                         $.ajax({
-                            url: template, 
+                            url: template,
                             type: "GET",
                             success: function(data) {
                                 $("#saveerror").hide();
@@ -338,7 +347,7 @@ $(document).ready(function() {
                                             temp.posts.init(param);
                                             temp.posts.active();
                                         }
-                                    });    
+                                    });
                                 });
                             },
                             error: function(e) {err(e);}
